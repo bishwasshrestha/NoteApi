@@ -2,39 +2,38 @@ openapi: 3.0.0
 info:
   title: NoteApi
   description: An Api for a not app
-  contact:
+  contact: 
     name: Bishwas Shrestha
     email: firstname.lastname@domainname.com
-  version: "1.0"
+  version: '1.0'
 servers:
-  - url: "http://localhost:3000"
+  - url: 'http://localhost:3000'
   #----------------------------/components--------------------------------
 components:
-  securitySchemes:
-    BasicAuth:
-      type: http
-      scheme: basic
+    securitySchemes:
+      BasicAuth:
+        type: http
+        scheme: basic
+      
+      BearerAuth:
+        type: http
+        scheme: bearer
 
-    BearerAuth:
-      type: http
-      scheme: bearer
-
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: x-api-key
-
-    OAuth2:
-      type: oauth2
-      flows:
-        authorizationCode:
-          authorizationUrl: "https://domainname.com/oauth/authorize"
-          tokenUrl: "https://domainname.com/oauth/token"
-          scopes:
-            read: Grants access to read
-            write: Grants access to write
-            admin: Grants access to admin operation
-
+      ApiKeyAuth:
+        type: apiKey
+        in: header
+        name: x-api-key
+      
+      OAuth2:
+        type: oauth2
+        flows:
+          authorizationCode:
+            authorizationUrl: 'https://domainname.com/oauth/authorize'
+            tokenUrl: 'https://domainname.com/oauth/token'
+            scopes:
+              read: Grants access to read 
+              write: Grants access to write
+              admin: Grants access to admin operation        
 #----------------------------/Paths--------------------------------
 paths:
   #----------------------------/Notes Path --------------------------------
@@ -42,9 +41,9 @@ paths:
     #---------------------------/get without id ---------------------
     get:
       summary: fetches list of notes
-      description: this url fetches the list of notes from the user
+      description: this url fetches the list of notes from the user      
       responses:
-        "201":
+        '200':
           description: OK
           content:
             application/json:
@@ -52,56 +51,18 @@ paths:
                 type: array
                 items:
                   type: string
-        "404":
+        '404':
           description: Items not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [read]]
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [read]
+        ]
       operationId: get-api-v1-notes
-    #---------------------------/get with id in path---------------------
-  /api/v1/notes/{:noteId}:
-    get:
-      summary: Fetches note of the specific id
-      description: This url fetches a note use given note id
-      parameters:
-        -name: noteId
-        in: path
-        required: true
-        description: Requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: string
-        "400":
-          description: Invalid input
-        "404":
-          description: User not found
-        "default":
-          description: Unexpected error
-      operationId: get-api-v1-notes-id
-      security: [ApiKeyAuth: [], OAuth2: [read]]
-
     post:
       summary: posts a note
-      description: this url carries a body of text that user intends to store
-      parameters:
-        -name: noteId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+      description: this url carries a body of text that user intends to store.      
       operationId: post-api-v1-notes
       requestBody:
         required: true
@@ -110,32 +71,60 @@ paths:
             schema:
               type: object
               properties:
-                noteTitle:
-                  type: string
+                noteTitle: 
+                  type: string      
       responses:
-        "201":
+        '201':
           description: Created
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [write]]
-
-    put:
-      summary: updates a note with given id
-      description: this url updates the note of the given note id
-      operationId: put-api-v1-notes
-      parameters:
-        -name: noteId
+      security: [ 
+        ApiKeyAuth: [],
+        OAuth2: [write]
+        ]
+        
+    #---------------------------/get with id in path---------------------
+  /api/v1/notes/{noteId}:
+    parameters:
+      - name: noteId
+        schema:
+          type: integer        
         in: path
         required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+        description: Id of an existing user.
+           
+    get:      
+      summary: Fetches note of the specific id
+      description: This url fetches a note use given note id       
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          description: Invalid input
+        '404':
+          description: User not found
+        'default':
+          description: Unexpected error
+      operationId: get-api-v1-notes-id
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [read]
+        ]  
+    
+    put:      
+      summary: updates a note with given id
+      description: this url updates the note of the given note id
+      operationId: put-api-v1-notes  
       requestBody:
         required: true
         content:
@@ -143,50 +132,47 @@ paths:
             schema:
               type: object
               properties:
-                noteTitle:
+                noteTitle: 
                   type: string
       responses:
-        "200":
+        '200':
           description: OK
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [write]]
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [admin]
+        ]
 
     delete:
       summary: deletes a note with given id
       description: This url deletes a post belonging to the given note id
       operationId: delete-api-v1-notes
-      parameters:
-        -name: noteId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
       responses:
-        "200":
+        '200':
           description: OK
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [admin]]
-  #----------------------------/users Path--------------------------------
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [admin]
+        ]
+  #----------------------------/users Path--------------------------------   
   /api/v1/users:
-    #---------------------------/get without id ---------------------
+     #---------------------------/get without id ---------------------  
     get:
       summary: fetches list of users
       description: This url fetches list of all the users on database
       responses:
-        "201":
+        '200':
           description: OK
           content:
             application/json:
@@ -194,70 +180,20 @@ paths:
                 type: array
                 items:
                   type: object
-        "404":
+        '404':
           description: Items not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [read]]
-      operationId:
-        get-api-v1-users
-
-        #---------------------------/get without id ---------------------
-  "/api/v1/users/{:usersid}":
-    get:
-      summary: Fetches user with the given id
-      description: This url fetches user for given Id
-      parameters:
-        -name: usersId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-        "400":
-          description: Invalid input
-        "404":
-          description: User not found
-        "default":
-          description: Unexpected error
-      operationId: get-api-v1-users-id
-      security: [ApiKeyAuth: [], OAuth2: [read]]
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [read]
+        ]
+      operationId: get-api-v1-users
 
     post:
       summary: posts a user
       operationId: post-api-v1-users
-      description: This url carries user info in the body intended to be stored
-      parameters:
-        -name: usersId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+      description: This url carries user info in the body intended to be stored      
       requestBody:
         required: true
         content:
@@ -265,80 +201,103 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                username:                 
                   type: string
                 email:
                   type: string
-                password:
-                  type: string
+                password: 
+                  type: string                  
       responses:
-        "201":
+        '201':
           description: Created
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [write]]
+      security: [
+         ApiKeyAuth: [],
+        OAuth2: [write]
+        ]
+
+       #---------------------------/get without id ---------------------  
+  
+  /api/v1/users/{usersid}:
+    parameters:
+      - name: usersid
+        schema:
+          type: integer        
+        in: path
+        required: true
+        description: Id of an existing user.
+    
+    get:
+      summary: Fetches user with the given id
+      description: This url fetches user for given Id                 
+      responses:        
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object  
+        '400':
+          description: Invalid input
+        '404':
+          description: User not found
+        'default':
+          description: Unexpected error                    
+      operationId: get-api-v1-users-id
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [read]        
+        ]
 
     put:
       summary: updates a user with given id
       description: This url updates the user info for the given id
-      operationId: put-api-v1-users
-      parameters:
-        -name: usersId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
-      requestBody:
-        required: true
+      operationId: put-api-v1-users      
+      requestBody:  
         content:
           application/json:
             schema:
               type: object
-              properties:
-                username:
+              properties:                
+                username: 
                   type: string
                 email:
                   type: string
                 password:
-                  type: string
+                  type: string                  
       responses:
-        "200":
+        '200':
           description: OK
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [admin]]
+      security: [
+        ApiKeyAuth: [],
+        OAuth2: [admin]
+        ]
 
     delete:
       summary: deletes a user with given id
       description: This url deletes the user for given id
-      operationId: delete-api-v1-users
-      parameters:
-        -name: usersId
-        in: path
-        required: true
-        description: requires a unique id assigned to the user while registration
-        schema:
-          type: integer
-          format: int64
-          minimum: 1
+      operationId: delete-api-v1-users        
       responses:
-        "200":
+        '200':
           description: OK
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
-        "default":
+        'default':
           description: Unexpected error
-      security: [ApiKeyAuth: [], OAuth2: [admin]]
+      security: [
+         ApiKeyAuth: [],
+        OAuth2: [admin]
+        ]
