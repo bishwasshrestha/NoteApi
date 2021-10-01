@@ -5,12 +5,12 @@ info:
   contact:
     name: Bishwas Shrestha
     email: firstname.lastname@domainname.com
-  version: "2.0"
+  version: '3.0'
   license:
     name: Apache 2.0
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 servers:
-  - url: "http://localhost:3000"
+  - url: 'http://localhost:3000'
 tags:
   - name: note
     description: Everything about your note
@@ -26,8 +26,8 @@ components:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: "https://domainname.com/oauth/authorize"
-          tokenUrl: "https://domainname.com/oauth/token"
+          authorizationUrl: 'https://domainname.com/oauth/authorize'
+          tokenUrl: 'https://domainname.com/oauth/token'
           scopes:
             read: Grants access to read
             write: Grants access to write
@@ -54,7 +54,7 @@ components:
           pattern: abc123ABC
           minLength: 6
           format: password
-          description: "password, 6 character min, use alpha-numberic string"
+          description: 'password, 6 character min, use alpha-numberic string'
         email:
           type: string
           pattern: username@xyx.com
@@ -96,6 +96,17 @@ components:
         - userId
         - noteTitle
         - note
+    loginData:
+      title: loginData
+      type: object
+      properties:
+        username:
+          type: string
+          description: enter username to log in
+        password:
+          type: string
+      required:
+        - password
   parameters:
     limit:
       name: limit
@@ -105,22 +116,22 @@ components:
         type: number
       description: number of pages to display at once
 paths:
-  /api/v2/notes:
+  /api/v3/notes:
     get:
       tags:
         - note
       operationId: get-api-v1-notes
       description: Returns a list of notes
       responses:
-        "200":
+        '200':
           description: OK! Successfully returned list of notes!
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Note"
-        "400":
+                $ref: '#/components/schemas/Note'
+        '400':
           description: Bad Request
-        "404":
+        '404':
           description: Items not found
         default:
           description: Unexpected error
@@ -129,7 +140,7 @@ paths:
         - OAuth2:
             - read
       parameters:
-        - $ref: "#/components/parameters/limit"
+        - $ref: '#/components/parameters/limit'
     post:
       tags:
         - notes
@@ -140,13 +151,13 @@ paths:
         content:
           application/xml:
             schema:
-              $ref: "#/components/schemas/Note"
+              $ref: '#/components/schemas/Note'
       responses:
-        "201":
+        '201':
           description: Created! Successfully Created a note!
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -154,7 +165,7 @@ paths:
         - ApiKeyAuth: []
         - OAuth2:
             - write
-  "/api/v2/notes/{noteId}":
+  '/api/v3/notes/{noteId}':
     parameters:
       - name: noteId
         schema:
@@ -168,17 +179,17 @@ paths:
       operationId: get-api-v1-notes-id
       description: Returns a note of given note id
       responses:
-        "200":
-          description: "OK, Successfully returned a note"
+        '200':
+          description: 'OK, Successfully returned a note'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Note"
-        "400":
+                  $ref: '#/components/schemas/Note'
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -197,13 +208,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Note"
+              $ref: '#/components/schemas/Note'
       responses:
-        "200":
+        '200':
           description: OK! Successfully updated a note.
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -218,11 +229,11 @@ paths:
       description: Deletes a post belonging to the given note id
       operationId: delete-api-v1-notes
       responses:
-        "200":
-          description: "OK, Successfully deleted the note"
-        "400":
+        '200':
+          description: 'OK, Successfully deleted the note'
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -231,18 +242,18 @@ paths:
         - OAuth2:
             - admin
       parameters: []
-  /api/v2/users:
+  /api/v3/users:
     post:
       tags:
         - users
       operationId: post-api-v1-users
       description: Creates a user
       responses:
-        "201":
+        '201':
           description: Created! Successfully created a user!
-        "400":
+        '400':
           description: Bad Request
-        "401":
+        '401':
           description: Unauthorized
       security:
         - ApiKeyAuth: []
@@ -252,33 +263,33 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
           application/xml:
             schema:
-              $ref: "#/components/schemas/User"
-  "/api/v2/users/{userId}":
+              $ref: '#/components/schemas/User'
+  '/api/v3/users/{userId}':
     parameters:
       - name: userId
         in: path
-        required: true
         schema:
           type: string
-        description: "enter user id "
+        description: 'enter user id '
+        required: true
     get:
       tags:
         - users
       operationId: get-api-v1-users-id
       description: Returns the user for given id
       responses:
-        "200":
-          description: "OK, Successfully returned a user"
+        '200':
+          description: 'OK, Successfully returned a user'
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
-        "400":
+                $ref: '#/components/schemas/User'
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -296,13 +307,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/User"
+              $ref: '#/components/schemas/User'
       responses:
-        "200":
+        '200':
           description: OK! Successfully updated the user!
-        "400":
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -317,11 +328,11 @@ paths:
       operationId: delete-api-v1-users
       description: Deletes the user for given id
       responses:
-        "200":
-          description: "OK, Successfully deleted a user"
-        "400":
+        '200':
+          description: 'OK, Successfully deleted a user'
+        '400':
           description: Invalid input
-        "404":
+        '404':
           description: User not found
         default:
           description: Unexpected error
@@ -330,3 +341,38 @@ paths:
         - OAuth2:
             - admin
       parameters: []
+  /api/v3/login:
+    post:
+      summary: ''
+      operationId: post-api-v3-login
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Successfully logged in.
+                  token:
+                    type: string
+                  users:
+                    type: object
+                    properties:
+                      userid:
+                        type: string
+                        description: users id
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      dateCreated:
+                        type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginData'
+      description: end point for user to log in to the api
