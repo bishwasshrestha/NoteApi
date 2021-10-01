@@ -1,0 +1,332 @@
+openapi: 3.0.0
+info:
+  title: NoteApi
+  description: An Api for a not app
+  contact:
+    name: Bishwas Shrestha
+    email: firstname.lastname@domainname.com
+  version: "2.0"
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+servers:
+  - url: "http://localhost:3000"
+tags:
+  - name: note
+    description: Everything about your note
+  - name: user
+    description: Operations about user
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+    OAuth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "https://domainname.com/oauth/authorize"
+          tokenUrl: "https://domainname.com/oauth/token"
+          scopes:
+            read: Grants access to read
+            write: Grants access to write
+            admin: Grants access to admin operation
+  schemas:
+    User:
+      type: object
+      discriminator:
+        propertyName: userSchema
+      description: Data Model of user
+      properties:
+        userId:
+          type: string
+          description: unique id of the user
+        userName:
+          type: string
+          pattern: abc
+          minLength: 3
+          maxLength: 30
+          format: hostname
+          description: online handle for the user
+        password:
+          type: string
+          pattern: abc123ABC
+          minLength: 6
+          format: password
+          description: "password, 6 character min, use alpha-numberic string"
+        email:
+          type: string
+          pattern: username@xyx.com
+          format: email
+        fullName:
+          type: string
+          format: hostname
+          description: Full name of the host
+      required:
+        - password
+        - email
+    Note:
+      type: object
+      discriminator:
+        propertyName: noteSchema
+      description: Data Model of note
+      properties:
+        noteId:
+          type: string
+          description: |
+            id of this note
+        userId:
+          type: string
+          description: id of the user this note belongs to
+        noteTitle:
+          type: string
+          description: title of the note
+        note:
+          type: string
+          description: content body of the note
+        dateCreated:
+          type: object
+          format: date
+          description: date created
+          properties:
+            date:
+              type: integer
+      required:
+        - userId
+        - noteTitle
+        - note
+  parameters:
+    limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: number
+      description: number of pages to display at once
+paths:
+  /api/v2/notes:
+    get:
+      tags:
+        - note
+      operationId: get-api-v1-notes
+      description: Returns a list of notes
+      responses:
+        "200":
+          description: OK! Successfully returned list of notes!
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Note"
+        "400":
+          description: Bad Request
+        "404":
+          description: Items not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - read
+      parameters:
+        - $ref: "#/components/parameters/limit"
+    post:
+      tags:
+        - notes
+      operationId: post-api-v1-notes
+      description: Creates the notes
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/Note"
+      responses:
+        "201":
+          description: Created! Successfully Created a note!
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - write
+  "/api/v2/notes/{noteId}":
+    parameters:
+      - name: noteId
+        schema:
+          type: integer
+        in: path
+        required: true
+        description: Id of an existing user.
+    get:
+      tags:
+        - notes
+      operationId: get-api-v1-notes-id
+      description: Returns a note of given note id
+      responses:
+        "200":
+          description: "OK, Successfully returned a note"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Note"
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - read
+      parameters: []
+    put:
+      tags:
+        - notes
+      operationId: put-api-v1-notes
+      description: Updates the note of the given note id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Note"
+      responses:
+        "200":
+          description: OK! Successfully updated a note.
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - admin
+      parameters: []
+    delete:
+      tags:
+        - notes
+      description: Deletes a post belonging to the given note id
+      operationId: delete-api-v1-notes
+      responses:
+        "200":
+          description: "OK, Successfully deleted the note"
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - admin
+      parameters: []
+  /api/v2/users:
+    post:
+      tags:
+        - users
+      operationId: post-api-v1-users
+      description: Creates a user
+      responses:
+        "201":
+          description: Created! Successfully created a user!
+        "400":
+          description: Bad Request
+        "401":
+          description: Unauthorized
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - write
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+          application/xml:
+            schema:
+              $ref: "#/components/schemas/User"
+  "/api/v2/users/{userId}":
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: "enter user id "
+    get:
+      tags:
+        - users
+      operationId: get-api-v1-users-id
+      description: Returns the user for given id
+      responses:
+        "200":
+          description: "OK, Successfully returned a user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - read
+      parameters: []
+    put:
+      tags:
+        - users
+      operationId: put-api-v1-users
+      description: Updates the user info
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+          description: OK! Successfully updated the user!
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - admin
+      parameters: []
+    delete:
+      tags:
+        - users
+      operationId: delete-api-v1-users
+      description: Deletes the user for given id
+      responses:
+        "200":
+          description: "OK, Successfully deleted a user"
+        "400":
+          description: Invalid input
+        "404":
+          description: User not found
+        default:
+          description: Unexpected error
+      security:
+        - ApiKeyAuth: []
+        - OAuth2:
+            - admin
+      parameters: []
