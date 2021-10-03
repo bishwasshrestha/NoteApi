@@ -1,19 +1,22 @@
-GET http://localhost:3000/
+GET / HTTP/1.1
+Host: localhost:3000
+Authorization: Bearer <put your bearer token here>
 
 ###
-POST http://localhost:3000/signup/ HTTP/1.1
+POST /signup HTTP/1.1
+Host: localhost:3000
 content-type: application/json
 
 {
-    "email": "sample",
+    "email": "sample443",
     "password": "test password"
 }
 
 ###
-POST http://localhost:3000/login/ HTTP/1.1
+POST http://localhost:3000/signin/ HTTP/1.1
 content-type: application/json
 
 {
-    "email": "sample",
+    "email": "sample443",
     "password": "test password"
 }
