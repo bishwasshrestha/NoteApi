@@ -1,3 +1,7 @@
+###Development ### 
+# REST client
+*.rest
+
 ### macOS ###
 # General
 .DS_Store
