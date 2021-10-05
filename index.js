@@ -9,9 +9,15 @@ app.use(express.urlencoded({ extended: true }));
 
 const Users = [];
 
-const generateId = (list) => {
-  const maxId = list.length > 0 ? Math.max(...list.map((n) => n.user_id)) : 0;
-  return maxId + 1;
+const generateUUID = () => {
+  let dt = new Date().getTime();
+  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (dt + Math.random() * 16) % 16 | 0;
+    dt = Math.floor(dt / 16);
+    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+  });
+
+  return uuid;
 };
 
 app.post('/signup', (req, res) => {
@@ -24,7 +30,7 @@ app.post('/signup', (req, res) => {
       message: 'User Already Exists! Login or choose another user email',
     });
   } else {
-    const userId = generateId(Users);
+    const userId = generateUUID();
     const newUser = {
       user_id: userId,
       email: body.email,
@@ -54,10 +60,11 @@ app.post('/signin', (req, res) => {
   if (!currentUser) {
     res.status(404).send({ Error: 'No user exists' });
   } else {
+    delete currentUser.password;
+
     const token = jwt.sign(currentUser, process.env.SECRET_KEY, {
       expiresIn: 60 * 15,
     });
-    delete currentUser.password;
 
     const successResponse = {
       message: 'Logged in successfully',
