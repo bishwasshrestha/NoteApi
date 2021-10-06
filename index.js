@@ -11,6 +11,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/', authRoutes);
 
+app.get('/notes', checkAuth, async(req, res)=>{
+ console.log('notes path checkauth response:'+ checkAuth);
+});
+app.post('/notes', checkAuth, (req, res)=>{
+  console.log('post notes');
+});
+
 app.get('/users', checkAuth, async (req, res) => {
   console.log('im called')
 
@@ -19,6 +26,6 @@ app.get('/users', checkAuth, async (req, res) => {
   res.send(users);
 });
 
-app.listen(process.env.PORT, () => {
+app.listen((process.env.PORT), () => {
   console.log(`App listening on port ${process.env.PORT}`);
 });

@@ -55,7 +55,8 @@ passport.use(
   new JWTStrategy(
     {
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(), // This is assuming that the client will send the JWT token in Authorization Header as a Bearer Token.
-      secretOrKey: process.env.SECRET_KEY,
+      
+      secretOrKey: process.env.SECRET_KEY,      
     },
     async (jwtPayload, done) => {
       try {
